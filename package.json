@@ -1,0 +1,25 @@
+{
+  "name": "browser-check",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Intent verification for browser-automation agents: classify actions against a stated goal, escalate unsafe ones to a human.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "playwright": "^1.47.0",
+    "@anthropic-ai/sdk": "^0.30.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0",
+    "@types/node": "^22.7.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
