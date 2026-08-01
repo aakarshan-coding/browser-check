@@ -11,8 +11,24 @@ export async function captureDomContext(locator: Locator): Promise<DomContext> {
       attributes[attr.name] = attr.value;
     }
 
+    const INTERACTIVE_TAGS = new Set(['button', 'a', 'input', 'select', 'textarea']);
+
     const parent = el.parentElement;
-    const nearbyText = parent ? (parent.textContent || '').trim().slice(0, 300) : '';
+    let nearbyText = '';
+    if (parent) {
+      for (const node of Array.from(parent.childNodes)) {
+        if (node === el) continue;
+        if (node.nodeType === Node.TEXT_NODE) {
+          nearbyText += (node.textContent || '') + ' ';
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const sibling = node as Element;
+          if (!INTERACTIVE_TAGS.has(sibling.tagName.toLowerCase())) {
+            nearbyText += (sibling.textContent || '') + ' ';
+          }
+        }
+      }
+      nearbyText = nearbyText.trim().slice(0, 300);
+    }
 
     const form = el.closest('form');
     const formFieldNames: string[] = form

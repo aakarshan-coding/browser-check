@@ -1,8 +1,11 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { unlink } from 'node:fs/promises';
 import { BrowserCheckSession } from '../src/session.js';
 import { ActionBlockedError } from '../src/errors.js';
 import type { EscalationHandler } from '../src/escalation/cliHandler.js';
 import type { LlmJudgeProvider } from '../src/types.js';
+
+const logPath = 'test-session-audit.log.jsonl';
 
 function fakeLocator(text: string) {
   return {
@@ -23,13 +26,17 @@ function autoAllowHandler(): EscalationHandler {
 const stubProvider: LlmJudgeProvider = { judge: vi.fn().mockResolvedValue({ verdict: 'safe', reason: 'llm says fine' }) };
 
 describe('BrowserCheckSession', () => {
+  afterEach(async () => {
+    await unlink(logPath).catch(() => {});
+  });
+
   it('auto-allows a rule-safe fill action without escalation', async () => {
     const escalationHandler = autoDenyHandler();
     const locator = fakeLocator('');
     const session = new BrowserCheckSession({
       page: {} as never,
       goal: 'search for shoes',
-      logPath: 'test-session-audit.log.jsonl',
+      logPath,
       escalationHandler,
       llmJudgeProvider: stubProvider,
     });
@@ -46,7 +53,7 @@ describe('BrowserCheckSession', () => {
     const session = new BrowserCheckSession({
       page: {} as never,
       goal: 'manage my profile',
-      logPath: 'test-session-audit.log.jsonl',
+      logPath,
       escalationHandler,
       llmJudgeProvider: stubProvider,
     });
@@ -64,7 +71,7 @@ describe('BrowserCheckSession', () => {
     const session = new BrowserCheckSession({
       page: {} as never,
       goal: 'manage my profile',
-      logPath: 'test-session-audit.log.jsonl',
+      logPath,
       escalationHandler,
       llmJudgeProvider: stubProvider,
     });
@@ -80,7 +87,7 @@ describe('BrowserCheckSession', () => {
     const session = new BrowserCheckSession({
       page: {} as never,
       goal: 'browse products',
-      logPath: 'test-session-audit.log.jsonl',
+      logPath,
       escalationHandler,
       llmJudgeProvider: stubProvider,
     });
