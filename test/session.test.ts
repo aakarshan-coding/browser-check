@@ -55,6 +55,7 @@ describe('BrowserCheckSession', () => {
 
     expect(escalationHandler.escalate).toHaveBeenCalled();
     expect(locator.click).toHaveBeenCalled();
+    expect(stubProvider.judge).not.toHaveBeenCalled();
   });
 
   it('escalates a rule-unsafe click and throws ActionBlockedError when the human denies', async () => {
@@ -70,6 +71,7 @@ describe('BrowserCheckSession', () => {
 
     await expect(session.click(locator)).rejects.toThrow(ActionBlockedError);
     expect(locator.click).not.toHaveBeenCalled();
+    expect(stubProvider.judge).not.toHaveBeenCalled();
   });
 
   it('falls back to the LLM judge for an ambiguous click and auto-allows on a safe verdict', async () => {
